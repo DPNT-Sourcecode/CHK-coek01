@@ -28,10 +28,10 @@ def checkout(skus):
     total_price = 0
 
     items = {
-        "A": {"price": 50, "special_offer": {3: 130}},
-        "B": {"price": 30, "special_offer": {2: 45}},
-        "C": {"price": 20, "special_offer": {}},
-        "D": {"price": 15, "special_offer": {}},
+        "A": {"price": 50, "special_offer": {"qty_requirement": 3, "promotion_price": 130}},
+        "B": {"price": 30, "special_offer": {"qty_requirement": 2, "promotion_price": 45}},
+        "C": {"price": 20, "special_offer": None},
+        "D": {"price": 15, "special_offer": None},
     }
 
     shopping_cart = {
@@ -47,10 +47,15 @@ def checkout(skus):
 
         shopping_cart[sku] += items[sku]
 
-    for item in shopping_cart.items():
-        unit_price = items[item]["price"]
-        special_offer = items[item]["special_offer"]
-        if
+    for item_id, item_qty in shopping_cart.items():
+        unit_price = items[item_id]["price"]
+        special_offer = items[item_id]["special_offer"]
+
+        if special_offer is None:
+            total_price += unit_price * item_qty
+        else:
+            number_of_special_offers =
+
 
 
 
