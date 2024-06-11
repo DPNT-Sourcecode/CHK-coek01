@@ -45,6 +45,8 @@ class TestHello(TestCase):
         self.assertEquals(45, checkout_solution.checkout("STX"))
         self.assertEquals(45, checkout_solution.checkout("ZZZ"))
         self.assertEquals(45, checkout_solution.checkout("XYZ"))
+        self.assertEquals(79, checkout_solution.checkout("XXZZZ"))
+
 
 
 
