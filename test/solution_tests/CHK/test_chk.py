@@ -23,4 +23,3 @@ class TestHello(TestCase):
         self.assertEquals(180, checkout_solution.checkout("AAAA"))
         self.assertEquals(195, checkout_solution.checkout("AAABBC"))
 
-
