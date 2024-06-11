@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from solutions.SUM import sum_solution
+from lib.solutions.SUM import sum_solution
 
 
 class TestSum(TestCase):
