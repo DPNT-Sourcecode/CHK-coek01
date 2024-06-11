@@ -11,7 +11,7 @@ class InvalidInputException(Exception):
         super().__init__(exception_msg)
 
 
-class SuperMarketProducts(object):
+class SuperMarketProductsManager(object):
     def __init__(self):
         self.products = {}
 
@@ -80,7 +80,7 @@ def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[
 
 
 def get_supermarket_products():
-    supermarket_products = SuperMarketProducts()
+    supermarket_products = SuperMarketProductsManager()
 
     special_price_offers_product_A = OrderedDict()
     special_price_offers_product_A[5] = 200
@@ -105,6 +105,14 @@ def get_supermarket_products():
                                     "num_of_product_gained_per_promo": 1
                                 })
     )
+    supermarket_products.add_product(
+        Product("F", 10, None,
+                {
+                    "quantity_required": 3,
+                    "product_gained": "F",
+                    "num_of_product_gained_per_promo": 1
+                })
+    )
 
     return supermarket_products
 
@@ -120,7 +128,7 @@ def get_shopping_cart(skus: List[str]) -> Dict:
     return shopping_cart
 
 
-def compute_checkout_price(supermarket_products: SuperMarketProducts, shopping_cart: Dict):
+def compute_checkout_price(supermarket_products: SuperMarketProductsManager, shopping_cart: Dict):
     checkout_price = 0
     supermarket_products.apply_special_product_offers(shopping_cart)
 
@@ -142,5 +150,6 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 
