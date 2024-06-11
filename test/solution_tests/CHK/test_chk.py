@@ -27,6 +27,11 @@ class TestHello(TestCase):
         self.assertEquals(80, checkout_solution.checkout("EEE"))
         self.assertEquals(120, checkout_solution.checkout("EEEE"))
 
+        self.assertEquals(120, checkout_solution.checkout("EEB"))
+        self.assertEquals(120, checkout_solution.checkout("EEEE"))
+        self.assertEquals(120, checkout_solution.checkout("EEEE"))
+
+
 
 
 
