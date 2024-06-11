@@ -6,4 +6,4 @@ from lib.solutions.HLO import hello_solution
 
 class TestHello(TestCase):
     def test_hello(self):
-        self.assertEquals("Hello, World!", hello_solution.hello(""))
+        self.assertEquals("Hello, John!", hello_solution.hello("John"))
