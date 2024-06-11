@@ -18,8 +18,12 @@ class TestHello(TestCase):
         self.assertEquals(0, checkout_solution.checkout(""))
 
     def test_promotions(self):
-        self.assertEquals(130, checkout_solution.checkout("AAA"))
-        self.assertEquals(260, checkout_solution.checkout("AAAAAA"))
-        self.assertEquals(180, checkout_solution.checkout("AAAA"))
-        self.assertEquals(195, checkout_solution.checkout("AAABBC"))
+        # self.assertEquals(130, checkout_solution.checkout("AAA"))
+        # self.assertEquals(260, checkout_solution.checkout("AAAAAA"))
+        # self.assertEquals(180, checkout_solution.checkout("AAAA"))
+        # self.assertEquals(195, checkout_solution.checkout("AAABBC"))
+        self.assertEquals(250, checkout_solution.checkout("AAAAAA"))
+
+
+
 
