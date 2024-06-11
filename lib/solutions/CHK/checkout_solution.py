@@ -14,6 +14,9 @@ class InvalidInputException(Exception):
 class SuperMarketProductsManager(object):
     def __init__(self):
         self.products = {}
+        self.same_product_buy_offer = []
+        self.buy_product_get_another_for_free_offer = []
+        self.buy_various_products_offer = []
 
     def add_product(self, product):
         self.products[product.name] = product
@@ -21,50 +24,94 @@ class SuperMarketProductsManager(object):
     def get_available_products(self):
         return list(self.products.keys())
 
-    def get_checkout_price_for_product(self, product, checkout_qty):
-        return self.products[product].get_checkout_price(checkout_qty)
+    def add_offer(self, offer):
+        if isinstance(offer, SameProductBuyOffer):
+            self.same_product_buy_offer.append(offer)
 
-    def apply_special_product_offers(self, shopping_cart):
-        for product in self.products.values():
-            product.apply_special_product_offers(shopping_cart)
+        elif isinstance(offer, BuyVariousProductsOffer):
+            self.buy_various_products_offer.append(offer)
+
+        elif isinstance(offer, BuyProductGetAnotherForFreeOffer):
+            self.buy_product_get_another_for_free_offer.append(offer)
+
+    def get_checkout_price(self, shopping_cart):
+        checkout_price = 0
+        for offer in self.buy_product_get_another_for_free_offer:
+            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+        for offer in self.buy_various_products_offer:
+            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+        for offer in self.same_product_buy_offer:
+            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+
+        for product, checkout_qty in shopping_cart.items():
+            checkout_price += self.products[product].get_checkout_price(checkout_qty)
+
+
+class SameProductBuyOffer(object):
+    def __init__(self, target_product, requirement_qty, promo_price):
+        self.target_product = target_product
+        self.requirement_qty = requirement_qty
+        self.promo_price = promo_price
+
+    def apply_offer_if_applicable(self, checkout_price, shopping_cart):
+        if self.target_product not in shopping_cart:
+            return
+        checkout_qty = shopping_cart[self.target_product]
+        number_of_promotions = math.floor(checkout_qty / self.requirement_qty)
+        checkout_price += (number_of_promotions * self.promo_price)
+        shopping_cart[self.target_product] = checkout_qty - number_of_promotions * self.requirement_qty
+
+
+class BuyProductGetAnotherForFreeOffer(object):
+    def __init__(self, target_product, requirement_qty, product_earned):
+        self.target_product = target_product
+        self.requirement_qty = requirement_qty
+        self.product_earned = product_earned
+
+    def apply_offer_if_applicable(self, shopping_cart):
+        if self.target_product not in shopping_cart:
+            return
+
+        number_of_promotions = math.floor(shopping_cart.get(self.target_product, 0) / self.requirement_qty)
+        quantity_of_products_gained = number_of_promotions
+        if self.product_earned in shopping_cart:
+            if shopping_cart[self.product_earned] > quantity_of_products_gained:
+                shopping_cart[self.product_earned] -= quantity_of_products_gained
+            else:
+                shopping_cart[self.product_earned] = 0
+
+
+class BuyVariousProductsOffer(object):
+    def __init__(self, target_products, requirement_qty, promo_price):
+        self.target_products = target_products
+        self.requirement_qty = requirement_qty
+        self.promo_price = promo_price
+
+    def apply_offer_if_applicable(self, checkout_price, shopping_cart):
+        products_bought = 0
+        for target_product in self.target_products:
+            products_bought += shopping_cart.get(target_product, 0)
+
+        if products_bought < self.requirement_qty:
+            return
+
+        num_of_promos = math.floor(products_bought / self.requirement_qty)
+
+        for _ in range(num_of_promos*self.requirement_qty):
+            for target_product in self.target_products:
+                if shopping_cart.get(target_product, 0) > 0:
+                    shopping_cart[target_product] -= 1
+
+        checkout_price += num_of_promos * self.promo_price
 
 
 class Product(object):
-    def __init__(self, name, unit_price, special_price_offers=None, special_product_offers=None):
+    def __init__(self, name, unit_price):
         self.name = name
         self.unit_price = unit_price
-        self.special_price_offers = special_price_offers
-        self.special_product_offers = special_product_offers
 
     def get_checkout_price(self, checkout_qty):
-        if self.special_price_offers is None:
-            return checkout_qty * self.unit_price
-
-        checkout_price = 0
-        for special_offer_qty_requirement, special_price in self.special_price_offers.items():
-            number_of_promotions = math.floor(checkout_qty / special_offer_qty_requirement)
-            checkout_price += (number_of_promotions * special_price)
-            checkout_qty = checkout_qty - number_of_promotions * special_offer_qty_requirement
-
-        checkout_price += checkout_qty * self.unit_price
-        return checkout_price
-
-    def apply_special_product_offers(self, shopping_cart):
-        if self.special_product_offers is None:
-            return 0
-
-        quantity_required = self.special_product_offers['quantity_required']
-        product_gained = self.special_product_offers['product_gained']
-        num_of_product_gained_per_promo = self.special_product_offers['num_of_product_gained_per_promo']
-
-        number_of_promotions = math.floor(shopping_cart.get(self.name, 0) / quantity_required)
-        quantity_of_products_gained = num_of_product_gained_per_promo * number_of_promotions
-        if product_gained in shopping_cart:
-            if shopping_cart[product_gained] > quantity_of_products_gained:
-                shopping_cart[product_gained] -= quantity_of_products_gained
-            else:
-                shopping_cart[product_gained] = 0
-
+        return checkout_qty * self.unit_price
 
 def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[str]:
     if not isinstance(skus, str):
@@ -79,120 +126,36 @@ def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[
     return parsed_skus
 
 
-def get_supermarket_products():
+def get_supermarket_products_manager():
     supermarket_products = SuperMarketProductsManager()
+    supermarket_products.add_product(Product("A", 50))
+    supermarket_products.add_product(Product("B", 30))
+    supermarket_products.add_product(Product("C", 20))
+    supermarket_products.add_product(Product("D", 15))
+    supermarket_products.add_product(Product("E", 40))
+    supermarket_products.add_product(Product("F", 10))
+    supermarket_products.add_product(Product("G", 20))
+    supermarket_products.add_product(Product("H", 10))
+    supermarket_products.add_product(Product("I", 35))
+    supermarket_products.add_product(Product("J", 60))
+    supermarket_products.add_product(Product("K", 70))
+    supermarket_products.add_product(Product("L", 90))
+    supermarket_products.add_product(Product("M", 15))
+    supermarket_products.add_product(Product("N", 40))
+    supermarket_products.add_product(Product("O", 10))
+    supermarket_products.add_product(Product("P", 50))
+    supermarket_products.add_product(Product("Q", 30))
+    supermarket_products.add_product(Product("R", 50))
+    supermarket_products.add_product(Product("S", 20))
+    supermarket_products.add_product(Product("T", 20))
+    supermarket_products.add_product(Product("U", 40))
+    supermarket_products.add_product(Product("V", 50))
+    supermarket_products.add_product(Product("W", 20))
+    supermarket_products.add_product(Product("X", 17))
+    supermarket_products.add_product(Product("Y", 20))
+    supermarket_products.add_product(Product("Z", 21))
+    SameProductBuyOffer
 
-    special_price_offers_product_A = OrderedDict()
-    special_price_offers_product_A[5] = 200
-    special_price_offers_product_A[3] = 130
-    supermarket_products.add_product(
-        Product("A", 50, special_price_offers_product_A)
-    )
-    supermarket_products.add_product(
-        Product("B", 30, {2: 45})
-    )
-    supermarket_products.add_product(
-        Product("C", 20)
-    )
-    supermarket_products.add_product(
-        Product("D", 15)
-    )
-    supermarket_products.add_product(
-        Product("E", 40, None,
-                {
-                    "quantity_required": 2,
-                    "product_gained": "B",
-                    "num_of_product_gained_per_promo": 1
-                })
-    )
-    supermarket_products.add_product(
-        Product("F", 10, None,
-                {
-                    "quantity_required": 3,
-                    "product_gained": "F",
-                    "num_of_product_gained_per_promo": 1
-                })
-    )
-    supermarket_products.add_product(
-        Product("G", 20, None, None)
-    )
-    supermarket_products.add_product(
-        Product("I", 35, None, None)
-    )
-    supermarket_products.add_product(
-        Product("J", 60, None, None)
-    )
-    supermarket_products.add_product(
-        Product("K", 80, {2: 150}, None)
-    )
-    supermarket_products.add_product(
-        Product("L", 90, None, None)
-    )
-    supermarket_products.add_product(
-        Product("M", 15, None, None)
-    )
-    supermarket_products.add_product(
-        Product("O", 10, None, None)
-    )
-    supermarket_products.add_product(
-        Product("P", 50, {5: 200}, None)
-    )
-    supermarket_products.add_product(
-        Product("Q", 30, {3: 80}, None)
-    )
-    supermarket_products.add_product(
-        Product("N", 40, None, {
-            "quantity_required": 3,
-            "product_gained": "M",
-            "num_of_product_gained_per_promo": 1
-        })
-    )
-    supermarket_products.add_product(
-        Product("R", 50, None, {
-            "quantity_required": 3,
-            "product_gained": "Q",
-            "num_of_product_gained_per_promo": 1
-        })
-    )
-    supermarket_products.add_product(
-        Product("S", 30, None, None)
-    )
-    supermarket_products.add_product(
-        Product("T", 20, None, None)
-    )
-    supermarket_products.add_product(
-        Product("U", 40, None, {
-            "quantity_required": 4,
-            "product_gained": "U",
-            "num_of_product_gained_per_promo": 1
-        })
-    )
-    supermarket_products.add_product(
-        Product("W", 20, None, None)
-    )
-    supermarket_products.add_product(
-        Product("X", 90, None, None)
-    )
-    supermarket_products.add_product(
-        Product("Y", 10, None, None)
-    )
-    supermarket_products.add_product(
-        Product("Z", 50, None, None)
-    )
-
-    special_price_offers_product_H = OrderedDict()
-    special_price_offers_product_H[10] = 80
-    special_price_offers_product_H[5] = 45
-    supermarket_products.add_product(
-        Product("H", 10, special_price_offers_product_H)
-    )
-
-    special_price_offers_product_V = OrderedDict()
-    special_price_offers_product_V[3] = 130
-    special_price_offers_product_V[2] = 90
-    supermarket_products.add_product(
-        Product("V", 50, special_price_offers_product_V)
-    )
 
     return supermarket_products
 
@@ -230,3 +193,4 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
