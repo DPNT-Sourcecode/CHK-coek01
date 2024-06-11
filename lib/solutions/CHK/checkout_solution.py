@@ -106,6 +106,7 @@ class BuyVariousProductsOffer(object):
             for target_product in self.target_products:
                 if shopping_cart.get(target_product, 0) > 0:
                     shopping_cart[target_product] -= 1
+                    break
 
         checkout_price += num_of_promos * self.promo_price
         return checkout_price
@@ -209,8 +210,3 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return supermarket_products.get_checkout_price(shopping_cart)
-
-
-
-
-
