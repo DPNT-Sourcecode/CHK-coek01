@@ -25,9 +25,8 @@ class SuperMarketProducts(object):
         return self.products[product].get_checkout_price(checkout_qty)
 
     def apply_special_product_offers(self, shopping_cart):
-        discount_on_products = 0
-        for product in self.products:
-            discount_on_products += product.apply_special_product_offers(shopping_cart)
+        for product in self.products.values():
+            product.apply_special_product_offers(shopping_cart)
 
 
 class Product(object):
@@ -54,8 +53,17 @@ class Product(object):
         if self.special_product_offers is None:
             return 0
 
-        number_of_promotions = math.floor(shopping_cart.get(self.name, 0)/ self.special_product_offers)
+        quantity_required = self.special_product_offers['quantity_required']
+        product_gained = self.special_product_offers['product_gained']
+        num_of_product_gained_per_promo = self.special_product_offers['num_of_product_gained_per_promo']
 
+        number_of_promotions = math.floor(shopping_cart.get(self.name, 0) / quantity_required)
+        quantity_of_products_gained = num_of_product_gained_per_promo * number_of_promotions
+        if product_gained in shopping_cart:
+            if shopping_cart[product_gained] > quantity_of_products_gained:
+                shopping_cart[product_gained] -= quantity_of_products_gained
+            else:
+                shopping_cart[product_gained] = 0
 
 
 def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[str]:
@@ -94,7 +102,8 @@ def get_supermarket_products():
                 {
                                     "quantity_required": 2,
                                     "product_gained": "B",
-                                    "number_of_product_gained": 1})
+                                    "num_of_product_gained_per_promo": 1
+                                })
     )
 
     return supermarket_products
@@ -113,6 +122,8 @@ def get_shopping_cart(skus: List[str]) -> Dict:
 
 def compute_checkout_price(supermarket_products: SuperMarketProducts, shopping_cart: Dict):
     checkout_price = 0
+    supermarket_products.apply_special_product_offers(shopping_cart)
+
     for item_id, item_qty in shopping_cart.items():
         checkout_price += supermarket_products.get_checkout_price_for_product(item_id, item_qty)
 
@@ -131,5 +142,6 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 

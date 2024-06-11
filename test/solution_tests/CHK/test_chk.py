@@ -24,12 +24,12 @@ class TestHello(TestCase):
         self.assertEquals(250, checkout_solution.checkout("AAAAAA"))
         self.assertEquals(330, checkout_solution.checkout("AAAAAAAA"))
         self.assertEquals(80, checkout_solution.checkout("EE"))
-        self.assertEquals(80, checkout_solution.checkout("EEE"))
-        self.assertEquals(120, checkout_solution.checkout("EEEE"))
+        self.assertEquals(120, checkout_solution.checkout("EEE"))
+        self.assertEquals(160, checkout_solution.checkout("EEEE"))
+        self.assertEquals(80, checkout_solution.checkout("EEB"))
+        self.assertEquals(120, checkout_solution.checkout("EEEB"))
+        self.assertEquals(160, checkout_solution.checkout("EEEEBB"))
 
-        self.assertEquals(120, checkout_solution.checkout("EEB"))
-        self.assertEquals(120, checkout_solution.checkout("EEEE"))
-        self.assertEquals(120, checkout_solution.checkout("EEEE"))
 
 
 
