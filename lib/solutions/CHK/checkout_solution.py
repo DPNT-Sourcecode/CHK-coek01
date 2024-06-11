@@ -1,14 +1,7 @@
-
+import math
 
 # noinspection PyUnusedLocal
 # skus = unicode string
-
-class Item(object):
-    def __init__(self, item_id, unit_price, special_offers):
-        self.item_id = item_id
-        self.unit_price = unit_price
-        self.special_offers = special_offers
-
 def get_parsed_skus(skus):
     if not isinstance(skus, str):
         raise Exception("Invalid skus type, it must be a string")
@@ -45,7 +38,7 @@ def checkout(skus):
         if sku not in items:
             return -1
 
-        shopping_cart[sku] += items[sku]
+        shopping_cart[sku] += 1
 
     for item_id, item_qty in shopping_cart.items():
         unit_price = items[item_id]["price"]
@@ -54,8 +47,13 @@ def checkout(skus):
         if special_offer is None:
             total_price += unit_price * item_qty
         else:
-            number_of_special_offers =
+            qty_requirement = special_offer["qty_requirement"]
+            promotion_price = special_offer["promotion_price"]
+            number_of_promotions = math.floor(item_qty/qty_requirement)
 
+            total_price += (number_of_promotions * promotion_price) + (item_qty - number_of_promotions * qty_requirement) * unit_price
+
+    return total_price
 
 
 
