@@ -8,7 +8,6 @@ class InvalidInputException(Exception):
 
 # noinspection PyUnusedLocal
 # skus = unicode string
-
 def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[str]:
     if not isinstance(skus, str):
         raise InvalidInputException("Invalid skus type, it must be a string!")
@@ -73,6 +72,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 
 
