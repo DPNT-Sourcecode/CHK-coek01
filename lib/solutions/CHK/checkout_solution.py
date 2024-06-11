@@ -113,6 +113,10 @@ def get_supermarket_products():
                     "num_of_product_gained_per_promo": 1
                 })
     )
+    """
+    ./record_and_upload.sh --no-video
+    
+    """
 
     return supermarket_products
 
@@ -150,6 +154,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 
 
