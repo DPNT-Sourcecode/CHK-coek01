@@ -37,7 +37,7 @@ class SuperMarketProductsManager(object):
     def get_checkout_price(self, shopping_cart):
         checkout_price = 0
         for offer in self.buy_product_get_another_for_free_offer:
-            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+            offer.apply_offer_if_applicable(shopping_cart)
         for offer in self.buy_various_products_offer:
             offer.apply_offer_if_applicable(checkout_price, shopping_cart)
         for offer in self.same_product_buy_offer:
@@ -155,18 +155,26 @@ def get_supermarket_products_manager():
     supermarket_products.add_product(Product("Y", 20))
     supermarket_products.add_product(Product("Z", 21))
 
-    SameProductBuyOffer("A", 5, 200)
-    SameProductBuyOffer("A", 3, 130)
-    SameProductBuyOffer("B", 2, 45)
-    SameProductBuyOffer("H", 10, 80)
-    SameProductBuyOffer("H", 5, 45)
-    SameProductBuyOffer("K", 2, 120)
-    SameProductBuyOffer("P", 5, 200)
-    SameProductBuyOffer("Q", 3, 80)
-    SameProductBuyOffer("V", 3, 130)
-    SameProductBuyOffer("V", 2, 90)
+    supermarket_products.add_offer(SameProductBuyOffer("A", 5, 200))
+    supermarket_products.add_offer(SameProductBuyOffer("A", 3, 130))
+    supermarket_products.add_offer(SameProductBuyOffer("B", 2, 45))
+    supermarket_products.add_offer(SameProductBuyOffer("H", 10, 80))
+    supermarket_products.add_offer(SameProductBuyOffer("H", 5, 45))
+    supermarket_products.add_offer(SameProductBuyOffer("K", 2, 120))
+    supermarket_products.add_offer(SameProductBuyOffer("P", 5, 200))
+    supermarket_products.add_offer(SameProductBuyOffer("Q", 3, 80))
+    supermarket_products.add_offer(SameProductBuyOffer("V", 3, 130))
+    supermarket_products.add_offer(SameProductBuyOffer("V", 2, 90))
 
-    BuyProductGetAnotherForFreeOffer
+    supermarket_products.add_offer(BuyProductGetAnotherForFreeOffer("E", 2, "B"))
+    supermarket_products.add_offer(BuyProductGetAnotherForFreeOffer("F", 3, "F"))
+    supermarket_products.add_offer(BuyProductGetAnotherForFreeOffer("N", 3, "M"))
+    supermarket_products.add_offer(BuyProductGetAnotherForFreeOffer("R", 3, "Q"))
+    supermarket_products.add_offer(BuyProductGetAnotherForFreeOffer("U", 4, "U"))
+
+    supermarket_products.add_offer(BuyVariousProductsOffer(["Z"], 3, 45))
+    supermarket_products.add_offer(BuyVariousProductsOffer(["S", "T", "Y"], 3, 45))
+    supermarket_products.add_offer(BuyVariousProductsOffer(["S", "T", "X", "Y", "Z"], 3, 45))
 
 
     return supermarket_products
@@ -183,18 +191,9 @@ def get_shopping_cart(skus: List[str]) -> Dict:
     return shopping_cart
 
 
-def compute_checkout_price(supermarket_products: SuperMarketProductsManager, shopping_cart: Dict):
-    checkout_price = 0
-    supermarket_products.apply_special_product_offers(shopping_cart)
-
-    for item_id, item_qty in shopping_cart.items():
-        checkout_price += supermarket_products.get_checkout_price_for_product(item_id, item_qty)
-
-    return checkout_price
-
 
 def checkout(skus):
-    supermarket_products = get_supermarket_products()
+    supermarket_products = get_supermarket_products_manager()
 
     try:
         parsed_skus = parsed_and_validate_input(skus, supermarket_products.get_available_products())
@@ -204,6 +203,7 @@ def checkout(skus):
 
     shopping_cart = get_shopping_cart(parsed_skus)
 
-    return compute_checkout_price(supermarket_products, shopping_cart)
+    return supermarket_products.get_checkout_price(shopping_cart)
+
 
 
