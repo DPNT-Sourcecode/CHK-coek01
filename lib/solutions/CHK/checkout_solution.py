@@ -154,7 +154,19 @@ def get_supermarket_products_manager():
     supermarket_products.add_product(Product("X", 17))
     supermarket_products.add_product(Product("Y", 20))
     supermarket_products.add_product(Product("Z", 21))
-    SameProductBuyOffer
+
+    SameProductBuyOffer("A", 5, 200)
+    SameProductBuyOffer("A", 3, 130)
+    SameProductBuyOffer("B", 2, 45)
+    SameProductBuyOffer("H", 10, 80)
+    SameProductBuyOffer("H", 5, 45)
+    SameProductBuyOffer("K", 2, 120)
+    SameProductBuyOffer("P", 5, 200)
+    SameProductBuyOffer("Q", 3, 80)
+    SameProductBuyOffer("V", 3, 130)
+    SameProductBuyOffer("V", 2, 90)
+
+    BuyProductGetAnotherForFreeOffer
 
 
     return supermarket_products
@@ -193,4 +205,5 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
