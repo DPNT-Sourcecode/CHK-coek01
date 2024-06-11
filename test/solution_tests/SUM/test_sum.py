@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from lib.solutions.SUM import sum_solution
+from solutions.SUM import sum_solution
 
 
 class TestSum(TestCase):
@@ -13,4 +13,3 @@ class TestSum(TestCase):
     def test_sum_none(self):
         with self.assertRaises(Exception):
             sum_solution.compute(None, None)
-
