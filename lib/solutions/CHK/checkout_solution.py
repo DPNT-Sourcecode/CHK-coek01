@@ -1,5 +1,5 @@
 import math
-from typing import List
+from typing import List, Dict
 
 
 class InvalidInputException(Exception):
@@ -17,6 +17,7 @@ def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[
     for sku in skus:
         if sku not in available_products:
             raise InvalidInputException("Invalid product informed: " + sku)
+
         parsed_skus.append(sku)
     return parsed_skus
 
@@ -31,43 +32,47 @@ def get_supermarket_products():
     return supermarket_products
 
 
-def checkout(skus):
-    supermarket_products = get_supermarket_products()
+def get_shopping_cart(skus: List[str]) -> Dict:
+    shopping_cart = {}
 
-    try:
-        parsed_skus = parsed_and_validate_input(skus, supermarket_products.keys())
-
-    except Exception:
-        return -1
-
-
-
-    shopping_cart = {
-        "A": 0,
-        "B": 0,
-        "C": 0,
-        "D": 0
-    }
-
-    for sku in parsed_skus:
-        if sku not in items:
-            return -1
-
+    for sku in skus:
+        if sku not in shopping_cart:
+            shopping_cart[sku] = 0
         shopping_cart[sku] += 1
 
-    total_price = 0
+    return shopping_cart
+
+
+def compute_checkout_price(supermarket_products, shopping_cart):
+    checkout_price = 0
     for item_id, item_qty in shopping_cart.items():
-        unit_price = items[item_id]["price"]
-        special_offer = items[item_id]["special_offer"]
+        unit_price = supermarket_products[item_id]["price"]
+        special_offer = supermarket_products[item_id]["special_offer"]
 
         if special_offer is None:
-            total_price += unit_price * item_qty
+            checkout_price += unit_price * item_qty
         else:
             qty_requirement = special_offer["qty_requirement"]
             promotion_price = special_offer["promotion_price"]
             number_of_promotions = math.floor(item_qty/qty_requirement)
 
-            total_price += (number_of_promotions * promotion_price) + (item_qty - number_of_promotions * qty_requirement) * unit_price
+            checkout_price += (number_of_promotions * promotion_price) + (item_qty - number_of_promotions * qty_requirement) * unit_price
 
-    return total_price
+    return checkout_price
+
+
+def checkout(skus):
+    supermarket_products = get_supermarket_products()
+
+    try:
+        parsed_skus = parsed_and_validate_input(skus, list(supermarket_products.keys()))
+
+    except Exception:
+        return -1
+
+    shopping_cart = get_shopping_cart(parsed_skus)
+
+    return compute_checkout_price(supermarket_products, shopping_cart)
+
+
 
