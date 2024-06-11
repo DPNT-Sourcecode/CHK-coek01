@@ -50,7 +50,12 @@ class Product(object):
         checkout_price += checkout_qty * self.unit_price
         return checkout_price
 
-    apply_special_product_offers(shopping_cart)
+    def apply_special_product_offers(self, shopping_cart):
+        if self.special_product_offers is None:
+            return 0
+
+        number_of_promotions = math.floor(shopping_cart.get(self.name, 0)/ self.special_product_offers)
+
 
 
 def parsed_and_validate_input(skus: str, available_products: List[str]) -> List[str]:
@@ -85,7 +90,11 @@ def get_supermarket_products():
         Product("D", 15)
     )
     supermarket_products.add_product(
-        Product("E", 40, None, {2: {"B": 1}})
+        Product("E", 40, None,
+                {
+                                    "quantity_required": 2,
+                                    "product_gained": "B",
+                                    "number_of_product_gained": 1})
     )
 
     return supermarket_products
@@ -122,6 +131,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 
 
