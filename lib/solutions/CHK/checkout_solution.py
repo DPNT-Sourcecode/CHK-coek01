@@ -107,6 +107,3 @@ def checkout(skus):
     return compute_checkout_price(supermarket_products, shopping_cart)
 
 
-
-
-
