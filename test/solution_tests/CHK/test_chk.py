@@ -8,9 +8,6 @@ class TestHello(TestCase):
     def test_all_items(self):
         self.assertEquals(115, checkout_solution.checkout("ABCD"))
 
-    def test_invalid_item(self):
-        self.assertEquals(-1, checkout_solution.checkout("ABCDF"))
-
     def test_invalid_input(self):
         self.assertEquals(-1, checkout_solution.checkout(10))
 
@@ -45,6 +42,7 @@ class TestHello(TestCase):
         self.assertEquals(120, checkout_solution.checkout("UUUU"))
         self.assertEquals(90, checkout_solution.checkout("VV"))
         self.assertEquals(130, checkout_solution.checkout("VVV"))
+
 
 
 

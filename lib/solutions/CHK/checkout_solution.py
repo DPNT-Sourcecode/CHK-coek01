@@ -46,6 +46,8 @@ class SuperMarketProductsManager(object):
         for product, checkout_qty in shopping_cart.items():
             checkout_price += self.products[product].get_checkout_price(checkout_qty)
 
+        return checkout_price
+
 
 class SameProductBuyOffer(object):
     def __init__(self, target_product, requirement_qty, promo_price):
@@ -176,7 +178,6 @@ def get_supermarket_products_manager():
     supermarket_products.add_offer(BuyVariousProductsOffer(["S", "T", "Y"], 3, 45))
     supermarket_products.add_offer(BuyVariousProductsOffer(["S", "T", "X", "Y", "Z"], 3, 45))
 
-
     return supermarket_products
 
 
@@ -204,6 +205,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return supermarket_products.get_checkout_price(shopping_cart)
+
 
 
 
