@@ -50,6 +50,12 @@ class TestHello(TestCase):
         self.assertEquals(65, checkout_solution.checkout("SSSZ"))
         self.assertEquals(62, checkout_solution.checkout("STXZ"))
 
+        self.assertEquals(1602, checkout_solution.checkout("ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ"))
+        self.assertEquals(1602, checkout_solution.checkout("LGCKAQXFOSKZGIWHNRNDITVBUUEOZXPYAVFDEPTBMQLYJRSMJCWH"))
+
+
+
+
 
 
 

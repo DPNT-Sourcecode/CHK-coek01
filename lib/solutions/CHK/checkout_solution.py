@@ -181,7 +181,7 @@ def get_supermarket_products_manager():
 
     supermarket_products.add_offer(BuyVariousProductsOffer(["Z"], 3, 45))
     supermarket_products.add_offer(BuyVariousProductsOffer(["Z", "S", "T", "Y"], 3, 45))
-    supermarket_products.add_offer(BuyVariousProductsOffer(["S", "T", "X", "Y", "Z"], 3, 45))
+    supermarket_products.add_offer(BuyVariousProductsOffer(["Z", "S", "T", "Y", "X"], 3, 45))
 
     return supermarket_products
 
@@ -210,4 +210,5 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return supermarket_products.get_checkout_price(shopping_cart)
+
 
