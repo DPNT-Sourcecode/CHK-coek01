@@ -42,7 +42,7 @@ class Product(object):
 
         checkout_price = 0
         for special_offer_qty_requirement, special_price in self.special_price_offers.items():
-            number_of_promotions = math.floor(checkout_qty/special_offer_qty_requirement)
+            number_of_promotions = math.floor(checkout_qty / special_offer_qty_requirement)
             checkout_price += (number_of_promotions * special_price)
             checkout_qty = checkout_qty - number_of_promotions * special_offer_qty_requirement
 
@@ -100,10 +100,10 @@ def get_supermarket_products():
     supermarket_products.add_product(
         Product("E", 40, None,
                 {
-                                    "quantity_required": 2,
-                                    "product_gained": "B",
-                                    "num_of_product_gained_per_promo": 1
-                                })
+                    "quantity_required": 2,
+                    "product_gained": "B",
+                    "num_of_product_gained_per_promo": 1
+                })
     )
     supermarket_products.add_product(
         Product("F", 10, None,
@@ -113,10 +113,86 @@ def get_supermarket_products():
                     "num_of_product_gained_per_promo": 1
                 })
     )
-    """
-    ./record_and_upload.sh --no-video
-    
-    """
+    supermarket_products.add_product(
+        Product("G", 20, None, None)
+    )
+    supermarket_products.add_product(
+        Product("I", 35, None, None)
+    )
+    supermarket_products.add_product(
+        Product("J", 60, None, None)
+    )
+    supermarket_products.add_product(
+        Product("K", 80, {2: 150}, None)
+    )
+    supermarket_products.add_product(
+        Product("L", 90, None, None)
+    )
+    supermarket_products.add_product(
+        Product("M", 15, None, None)
+    )
+    supermarket_products.add_product(
+        Product("O", 10, None, None)
+    )
+    supermarket_products.add_product(
+        Product("P", 50, {5: 200}, None)
+    )
+    supermarket_products.add_product(
+        Product("Q", 30, {3: 80}, None)
+    )
+    supermarket_products.add_product(
+        Product("N", 40, None, {
+            "quantity_required": 3,
+            "product_gained": "M",
+            "num_of_product_gained_per_promo": 1
+        })
+    )
+    supermarket_products.add_product(
+        Product("R", 50, None, {
+            "quantity_required": 3,
+            "product_gained": "Q",
+            "num_of_product_gained_per_promo": 1
+        })
+    )
+    supermarket_products.add_product(
+        Product("S", 30, None, None)
+    )
+    supermarket_products.add_product(
+        Product("T", 20, None, None)
+    )
+    supermarket_products.add_product(
+        Product("U", 40, None, {
+            "quantity_required": 4,
+            "product_gained": "U",
+            "num_of_product_gained_per_promo": 1
+        })
+    )
+    supermarket_products.add_product(
+        Product("W", 20, None, None)
+    )
+    supermarket_products.add_product(
+        Product("X", 90, None, None)
+    )
+    supermarket_products.add_product(
+        Product("Y", 10, None, None)
+    )
+    supermarket_products.add_product(
+        Product("Z", 50, None, None)
+    )
+
+    special_price_offers_product_H = OrderedDict()
+    special_price_offers_product_H[10] = 80
+    special_price_offers_product_H[5] = 45
+    supermarket_products.add_product(
+        Product("H", 10, special_price_offers_product_H)
+    )
+
+    special_price_offers_product_V = OrderedDict()
+    special_price_offers_product_V[3] = 130
+    special_price_offers_product_V[2] = 90
+    supermarket_products.add_product(
+        Product("V", 50, special_price_offers_product_V)
+    )
 
     return supermarket_products
 
@@ -154,7 +230,3 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
-
-
-
-
