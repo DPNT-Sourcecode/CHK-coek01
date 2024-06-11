@@ -65,7 +65,7 @@ def get_supermarket_products():
     special_price_offers_product_A[5] = 200
     special_price_offers_product_A[3] = 130
     supermarket_products.add_product(
-        Product("A", 50, {3: 130, 5: 200})
+        Product("A", 50, special_price_offers_product_A)
     )
     supermarket_products.add_product(
         Product("B", 30, {2: 45})
@@ -113,6 +113,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return compute_checkout_price(supermarket_products, shopping_cart)
+
 
 
 

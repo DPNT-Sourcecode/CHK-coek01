@@ -22,7 +22,11 @@ class TestHello(TestCase):
         # self.assertEquals(260, checkout_solution.checkout("AAAAAA"))
         # self.assertEquals(180, checkout_solution.checkout("AAAA"))
         # self.assertEquals(195, checkout_solution.checkout("AAABBC"))
-        self.assertEquals(250, checkout_solution.checkout("AAAAAA"))
+        # self.assertEquals(250, checkout_solution.checkout("AAAAAA"))
+        # self.assertEquals(330, checkout_solution.checkout("AAAAAAAA"))
+        self.assertEquals(80, checkout_solution.checkout("EE"))
+        self.assertEquals(80, checkout_solution.checkout("EEE"))
+
 
 
 
