@@ -34,7 +34,7 @@ class TestHello(TestCase):
 
         self.assertEquals(45, checkout_solution.checkout("HHHHH"))
         self.assertEquals(80, checkout_solution.checkout("HHHHHHHHHH"))
-        self.assertEquals(150, checkout_solution.checkout("KK"))
+        self.assertEquals(120, checkout_solution.checkout("KK"))
         self.assertEquals(120, checkout_solution.checkout("NNNM"))
         self.assertEquals(200, checkout_solution.checkout("PPPPP"))
         self.assertEquals(80, checkout_solution.checkout("QQQ"))
@@ -42,6 +42,11 @@ class TestHello(TestCase):
         self.assertEquals(120, checkout_solution.checkout("UUUU"))
         self.assertEquals(90, checkout_solution.checkout("VV"))
         self.assertEquals(130, checkout_solution.checkout("VVV"))
+        self.assertEquals(45, checkout_solution.checkout("STX"))
+        self.assertEquals(45, checkout_solution.checkout("ZZZ"))
+        self.assertEquals(45, checkout_solution.checkout("XYZ"))
+
+
 
 
 

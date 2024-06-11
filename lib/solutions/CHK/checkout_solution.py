@@ -37,11 +37,11 @@ class SuperMarketProductsManager(object):
     def get_checkout_price(self, shopping_cart):
         checkout_price = 0
         for offer in self.buy_product_get_another_for_free_offer:
-            offer.apply_offer_if_applicable(shopping_cart)
+            checkout_price = offer.apply_offer_if_applicable(checkout_price, shopping_cart)
         for offer in self.buy_various_products_offer:
-            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+            checkout_price = offer.apply_offer_if_applicable(checkout_price, shopping_cart)
         for offer in self.same_product_buy_offer:
-            offer.apply_offer_if_applicable(checkout_price, shopping_cart)
+            checkout_price = offer.apply_offer_if_applicable(checkout_price, shopping_cart)
 
         for product, checkout_qty in shopping_cart.items():
             checkout_price += self.products[product].get_checkout_price(checkout_qty)
@@ -57,11 +57,12 @@ class SameProductBuyOffer(object):
 
     def apply_offer_if_applicable(self, checkout_price, shopping_cart):
         if self.target_product not in shopping_cart:
-            return
+            return checkout_price
         checkout_qty = shopping_cart[self.target_product]
         number_of_promotions = math.floor(checkout_qty / self.requirement_qty)
         checkout_price += (number_of_promotions * self.promo_price)
         shopping_cart[self.target_product] = checkout_qty - number_of_promotions * self.requirement_qty
+        return checkout_price
 
 
 class BuyProductGetAnotherForFreeOffer(object):
@@ -70,9 +71,9 @@ class BuyProductGetAnotherForFreeOffer(object):
         self.requirement_qty = requirement_qty
         self.product_earned = product_earned
 
-    def apply_offer_if_applicable(self, shopping_cart):
+    def apply_offer_if_applicable(self, checkout_price, shopping_cart):
         if self.target_product not in shopping_cart:
-            return
+            return checkout_price
 
         number_of_promotions = math.floor(shopping_cart.get(self.target_product, 0) / self.requirement_qty)
         quantity_of_products_gained = number_of_promotions
@@ -81,6 +82,8 @@ class BuyProductGetAnotherForFreeOffer(object):
                 shopping_cart[self.product_earned] -= quantity_of_products_gained
             else:
                 shopping_cart[self.product_earned] = 0
+
+        return checkout_price
 
 
 class BuyVariousProductsOffer(object):
@@ -95,7 +98,7 @@ class BuyVariousProductsOffer(object):
             products_bought += shopping_cart.get(target_product, 0)
 
         if products_bought < self.requirement_qty:
-            return
+            return checkout_price
 
         num_of_promos = math.floor(products_bought / self.requirement_qty)
 
@@ -105,6 +108,7 @@ class BuyVariousProductsOffer(object):
                     shopping_cart[target_product] -= 1
 
         checkout_price += num_of_promos * self.promo_price
+        return checkout_price
 
 
 class Product(object):
@@ -205,6 +209,7 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return supermarket_products.get_checkout_price(shopping_cart)
+
 
 
 
