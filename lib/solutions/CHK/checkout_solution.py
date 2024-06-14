@@ -210,5 +210,3 @@ def checkout(skus):
     shopping_cart = get_shopping_cart(parsed_skus)
 
     return supermarket_products.get_checkout_price(shopping_cart)
-
-
